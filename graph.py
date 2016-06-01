@@ -87,40 +87,46 @@ class WeightedDigraph(Digraph):
     """
     A directed graph allowing for edge weights
     """
-    def addEdge(self, edge):
+    def addEdge(self, edge):  ## Note that the problem expects weights to be
+                              ## a tuple of floats, but that the destination node
+                              ## should not be included in this tuple; rather dest
+                              ## should be a standalone integer.
+                              ## Both dest and (tot, outs), should be in their own
+                              ## list.
+                              ## Thus, [dest, (tot, outs)]
         src = edge.getSource()
         dest = edge.getDestination()
         tot = edge.getTotalDistance()
         outs = edge.getOutdoorDistance()
         if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
-        self.edges[src].append((dest, tot, outs))
+        self.edges[src].append([dest, (tot, outs)])
     def childrenOf(self, node):
         return self.edges[node[0]]
     def __str__(self):
         res = ''
         for k in self.edges:
             for d in self.edges[k]:
-                res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], d[1], d[2])
+                res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], d[1][0], d[1][1])
         return res[:-1]
     
 
-#~ g = WeightedDigraph()
-#~ na = Node('a')
-#~ nb = Node('b')
-#~ nc = Node('c')
-#~ g.addNode(na)
-#~ g.addNode(nb)
-#~ g.addNode(nc)
-#~ e1 = WeightedEdge(na, nb, 15, 10)
-#~ print(e1)
-#~ print(e1.getTotalDistance())
-#~ print(e1.getOutdoorDistance())
-#~ e2 = WeightedEdge(na, nc, 14, 6)
-#~ e3 = WeightedEdge(nb, nc, 3, 1)
-#~ print(e2)
-#~ print(e3)
-#~ g.addEdge(e1)
-#~ g.addEdge(e2)
-#~ g.addEdge(e3)
-#~ print(g)
+g = WeightedDigraph()
+na = Node('a')
+nb = Node('b')
+nc = Node('c')
+g.addNode(na)
+g.addNode(nb)
+g.addNode(nc)
+e1 = WeightedEdge(na, nb, 15, 10)
+print(e1)
+print(e1.getTotalDistance())
+print(e1.getOutdoorDistance())
+e2 = WeightedEdge(na, nc, 14, 6)
+e3 = WeightedEdge(nb, nc, 3, 1)
+print(e2)
+print(e3)
+g.addEdge(e1)
+g.addEdge(e2)
+g.addEdge(e3)
+print(g)
