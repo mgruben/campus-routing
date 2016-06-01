@@ -51,8 +51,7 @@ def load_map(mapFilename):
             nodeDict[edgeAsList[1]] = Node(edgeAsList[1])
             g.addNode(Node(nodeDict[edgeAsList[1]]))
         g.addEdge(WeightedEdge(nodeDict[edgeAsList[0]], nodeDict[edgeAsList[1]], \
-                                edgeAsList[2], edgeAsList[3]))  
-        ## Oh, but I could make a dictionary.  Fuck yeah.
+                        float(edgeAsList[2]), float(edgeAsList[3])))  
     return g
 
 #
