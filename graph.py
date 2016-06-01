@@ -32,6 +32,30 @@ class Edge(object):
         return self.dest
     def __str__(self):
         return '{0}->{1}'.format(self.src, self.dest)
+        
+class WeightedEdge(Edge):
+    def __init__(self, src, dest, weight = 1.0):
+        Edge.__init__(src, dest)
+        self.weight = weight
+    def getWeight(self):
+        return self.weight
+    def __str__(self):
+        return str(self.src) + '->' + str(self.dest) +' (' + str(self.weight) + ')'
+
+class TwoWeightedEdge(Edge):
+    def __init__(self, src, dest, weight1 = 1.0, weight2 = 1.0, wname1 = "weight1", wname2 = "weight2"):
+        Edge.__init__(src, dest)
+        self.weight1 = weight1
+        self.weight2 = weight2
+        self.wname1 = wname1
+        self.wname2 = wname2
+    def getWeight1(self):
+        return self.weight1
+    def getWeight2(self):
+        return self.weight2
+    def __str__(self):
+        return str(self.src) + '->' + str(self.dest) +' 1:(' + str(self.weight1) + ')'\
+                             +' 2:(' + str(self.weight2) + ')'
 
 class Digraph(object):
     """
