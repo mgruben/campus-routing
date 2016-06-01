@@ -35,17 +35,17 @@ class Edge(object):
 
 
 class WeightedEdge(Edge):
-    def __init__(self, src, dest, totalDistance = 1.0, outsideDistance = 1.0):
+    def __init__(self, src, dest, totalDistance = 1.0, outdoorDistance = 1.0):
         Edge.__init__(self, src, dest)
         self.totalDistance = totalDistance
-        self.outsideDistance = outsideDistance
+        self.outdoorDistance = outdoorDistance
     def getTotalDistance(self):
         return self.totalDistance
-    def getOutsideDistance(self):
-        return self.outsideDistance
+    def getOutdoorDistance(self):
+        return self.outdoorDistance
     def __str__(self):
         return str(self.src) + '->' + str(self.dest) +' ('\
-            + str(self.totalDistance) + ', ' + str(self.outsideDistance) + ')'
+            + str(self.totalDistance) + ', ' + str(self.outdoorDistance) + ')'
 
 class Digraph(object):
     """
@@ -91,10 +91,12 @@ class WeightedDigraph(Digraph):
         src = edge.getSource()
         dest = edge.getDestination()
         tot = edge.getTotalDistance()
-        outs = edge.getOutsideDistance()
+        outs = edge.getOutdoorDistance()
         if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
         self.edges[src].append((dest, tot, outs))
+    def childrenOf(self, node):
+        return self.edges[node[0]]
     def __str__(self):
         res = ''
         for k in self.edges:
@@ -113,7 +115,7 @@ g.addNode(nc)
 e1 = WeightedEdge(na, nb, 15, 10)
 print(e1)
 print(e1.getTotalDistance())
-print(e1.getOutsideDistance())
+print(e1.getOutdoorDistance())
 e2 = WeightedEdge(na, nc, 14, 6)
 e3 = WeightedEdge(nb, nc, 3, 1)
 print(e2)
