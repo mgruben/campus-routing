@@ -39,21 +39,23 @@ def load_map(mapFilename):
     # TODO
     print("Loading map from file...")
     g = WeightedDigraph()
-    nodeSet = set([])
+    nodeDict = {}
     listOfEdges = []
     pathAndFile = '/home/human/edX/6.00.2x/Python Problem Sets/PS5/ProblemSet5/'+mapFilename
-    inFile = open(pathAndFile, 'r', 0)
+    inFile = open(pathAndFile, 'r')
     for line in inFile:
         edgeAsList = line.split()
-        nodeSet.add(edgeAsList[0])
-        nodeSet.add(edgeAsList[1])
+        if edgeAsList[0] not in nodeDict:
+            nodeDict[edgeAsList[0]] = Node(edgeAsList[0])
+        if edgeAsList[1] not in nodeDict:
+            nodeDict[edgeAsList[1]] = Node(edgeAsList[1])
         listOfEdges.append(edgeAsList)
-    
-    for node in nodeSet:
-        g.addNode(Node(node))
+        ## Oh, but I could make a dictionary.  Fuck yeah.
+    for node in nodeDict:
+        g.addNode(Node(nodeDict[node]))
     
     for edge in listOfEdges:
-        g.addEdge(WeightedEdge(edge[0], edge[1], edge[2], edge[3]))
+        g.addEdge(WeightedEdge(nodeDict[edge[0]], nodeDict[edge[1]], edge[2], edge[3]))
         
     return g
 
@@ -124,13 +126,13 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
- if __name__ == '__main__':
-     Test cases
-     mitMap = load_map("mit_map.txt")
-     print(isinstance(mitMap, Digraph))
-     print(isinstance(mitMap, WeightedDigraph))
-     print('nodes', mitMap.nodes)
-     print('edges', mitMap.edges)
+if __name__ == '__main__':
+    ## Test cases
+    mitMap = load_map("mit_map.txt")
+    print(isinstance(mitMap, Digraph))
+    print(isinstance(mitMap, WeightedDigraph))
+    print('nodes', mitMap.nodes)
+    print('edges', mitMap.edges)
 
 
      #~ LARGE_DIST = 1000000
