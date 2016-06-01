@@ -46,8 +46,8 @@ class WeightedEdge(Edge):
     def getWeight2(self):
         return self.weight2
     def __str__(self):
-        return str(self.src) + '->' + str(self.dest) +' 1:(' + str(self.weight1) + ')'\
-                             +' 2:(' + str(self.weight2) + ')'
+        return str(self.src) + '->' + str(self.dest) +' (' + str(self.weight1) + ', '\
+                             + str(self.weight2) + ')'
 
 class Digraph(object):
     """
