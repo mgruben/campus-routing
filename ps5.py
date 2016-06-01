@@ -40,23 +40,19 @@ def load_map(mapFilename):
     print("Loading map from file...")
     g = WeightedDigraph()
     nodeDict = {}
-    listOfEdges = []
     pathAndFile = '/home/human/edX/6.00.2x/Python Problem Sets/PS5/ProblemSet5/'+mapFilename
     inFile = open(pathAndFile, 'r')
     for line in inFile:
         edgeAsList = line.split()
         if edgeAsList[0] not in nodeDict:
             nodeDict[edgeAsList[0]] = Node(edgeAsList[0])
+            g.addNode(Node(nodeDict[edgeAsList[0]]))
         if edgeAsList[1] not in nodeDict:
             nodeDict[edgeAsList[1]] = Node(edgeAsList[1])
-        listOfEdges.append(edgeAsList)
+            g.addNode(Node(nodeDict[edgeAsList[1]]))
+        g.addEdge(WeightedEdge(nodeDict[edgeAsList[0]], nodeDict[edgeAsList[1]], \
+                                edgeAsList[2], edgeAsList[3]))  
         ## Oh, but I could make a dictionary.  Fuck yeah.
-    for node in nodeDict:
-        g.addNode(Node(nodeDict[node]))
-    
-    for edge in listOfEdges:
-        g.addEdge(WeightedEdge(nodeDict[edge[0]], nodeDict[edge[1]], edge[2], edge[3]))
-        
     return g
 
 #
