@@ -35,19 +35,17 @@ class Edge(object):
 
 
 class WeightedEdge(Edge):
-    def __init__(self, src, dest, weight1 = 1.0, weight2 = 1.0, wname1 = "weight1", wname2 = "weight2"):
+    def __init__(self, src, dest, totalDistance = 1.0, outsideDistance = 1.0):
         Edge.__init__(src, dest)
-        self.weight1 = weight1
-        self.weight2 = weight2
-        self.wname1 = wname1
-        self.wname2 = wname2
-    def getWeight1(self):
-        return self.weight1
-    def getWeight2(self):
-        return self.weight2
+        self.totalDistance = totalDistance
+        self.outsideDistance = outsideDistance
+    def getTotalDistance(self):
+        return self.totalDistance
+    def getOutsideDistance(self):
+        return self.outsideDistance
     def __str__(self):
-        return str(self.src) + '->' + str(self.dest) +' (' + str(self.weight1) + ', '\
-                             + str(self.weight2) + ')'
+        return str(self.src) + '->' + str(self.dest) +' ('\
+            + str(self.totalDistance) + ', ' + str(self.outsideDistance) + ')'
 
 class Digraph(object):
     """
