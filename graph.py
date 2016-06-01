@@ -82,8 +82,28 @@ class Digraph(object):
             for d in self.edges[k]:
                 res = '{0}{1}->{2}\n'.format(res, k, d)
         return res[:-1]
+        
+class WeightedDigraph(Digraph):
+    """
+    A directed graph allowing for edge weights
+    """
+    def addEdge(self, edge):
+        src = edge.getSource()
+        dest = edge.getDestination()
+        tot = edge.getTotalDistance()
+        outs = edge.getOutsideDistance()
+        if not(src in self.nodes and dest in self.nodes):
+            raise ValueError('Node not in graph')
+        self.edges[src].append((dest, tot, outs))
+    def __str__(self):
+        res = ''
+        for k in self.edges:
+            for d in self.edges[k]:
+                res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], d[1], d[2])
+        return res[:-1]
+    
 
-g = Digraph()
+g = WeightedDigraph()
 na = Node('a')
 nb = Node('b')
 nc = Node('c')
