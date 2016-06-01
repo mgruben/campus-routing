@@ -36,7 +36,7 @@ class Edge(object):
 
 class WeightedEdge(Edge):
     def __init__(self, src, dest, totalDistance = 1.0, outsideDistance = 1.0):
-        Edge.__init__(src, dest)
+        Edge.__init__(self, src, dest)
         self.totalDistance = totalDistance
         self.outsideDistance = outsideDistance
     def getTotalDistance(self):
@@ -79,6 +79,26 @@ class Digraph(object):
     def __str__(self):
         res = ''
         for k in self.edges:
-            for d in self.edges[str(k)]:
+            for d in self.edges[k]:
                 res = '{0}{1}->{2}\n'.format(res, k, d)
         return res[:-1]
+
+g = Digraph()
+na = Node('a')
+nb = Node('b')
+nc = Node('c')
+g.addNode(na)
+g.addNode(nb)
+g.addNode(nc)
+e1 = WeightedEdge(na, nb, 15, 10)
+print(e1)
+print(e1.getTotalDistance())
+print(e1.getOutsideDistance())
+e2 = WeightedEdge(na, nc, 14, 6)
+e3 = WeightedEdge(nb, nc, 3, 1)
+print(e2)
+print(e3)
+g.addEdge(e1)
+g.addEdge(e2)
+g.addEdge(e3)
+print(g)
