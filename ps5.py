@@ -95,7 +95,6 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
-    printPath(path)
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
@@ -120,7 +119,7 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
 #
-def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
+def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):
     """
     Finds the shortest path from start to end using directed depth-first.
     search approach. The total distance travelled on the path must not
@@ -145,21 +144,42 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
         If there exists no path that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    assert type(start) == str, "start must be passed to directedDFS as a string"
-    assert type(end) == str, "end must be passed to directedDFS as a string"
+    assert type(start) == str, "start must be passed to bruteForceSearch as str"
+    assert type(end) == str, "end must be passed to bruteForceSearch as str"
     
     startNode = digraph.getNode(start)
     endNode = digraph.getNode(end)
     
-    assert digraph.hasNode(startNode), "start node not in WeightedDigraph"
-    assert digraph.hasNode(endNode), "end node not in WeightedDigraph"
+    assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
+    assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
+    path = path + [start]
+    if startNode == endNode:
+        return path
+    for node in digraph.childrenOf(startNode):
+        if shortest == None or \
+            digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest):
+            if node.getName() not in path: # To avoid cycles
+                newPath = directedDFS(digraph, node.getName(), end,\
+                    maxTotalDist, maxDistOutdoors, path, shortest)
+                if newPath != None \
+                    and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
+                        maxDistOutdoors):
+                    if shortest == None:
+                        shortest = newPath
+                    elif digraph.getTotalDistance(newPath) < \
+                        digraph.getTotalDistance(shortest):
+                        shortest = newPath                    
+    if len(path) == 1 and shortest == None:
+        raise ValueError("No path satisfies the constraints")
+    else:
+        return shortest
     
     
     
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
-if __name__ == '__main__':
+#~ if __name__ == '__main__':
     ## Test cases
     #~ mitMap = load_map("mit_map.txt")
     #~ print(isinstance(mitMap, Digraph))
@@ -188,12 +208,12 @@ if __name__ == '__main__':
     #~ print(bruteForceSearch(map3, "1", "3", 10, 10))
 
     #~ Course Test: map5 B
-    map5 = load_map("map5.txt")
+    #~ map5 = load_map("map5.txt")
     #~ print(bruteForceSearch(map5, "1", "3", 17, 8))
     #~ ['1', '2', '4', '3']
     #~ print(bruteForceSearch(map5, "1", "5", 23, 11))
     #~ ['1', '2', '4', '3', '5']
-    print(bruteForceSearch(map5, "4", "5", 21, 11))
+    #~ print(bruteForceSearch(map5, "4", "5", 21, 11))
     #~ ['4', '3', '5']
     #~ print(bruteForceSearch(map5, "5", "1", 100, 100))
     #~ ValueError successfully raised
