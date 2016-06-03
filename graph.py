@@ -88,7 +88,8 @@ class WeightedDigraph(Digraph):
     A directed graph allowing for edge weights
     """
     def __init__(self):
-        self.nodes = {}
+        self.nodes = set([])
+        self.nodeTable = {}
         self.edges = {}    
     def addEdge(self, edge):  ## Note that the problem expects weights to be
                               ## a tuple of floats, but that the destination node
@@ -101,21 +102,22 @@ class WeightedDigraph(Digraph):
         dest = edge.getDestination()
         tot = edge.getTotalDistance()
         outs = edge.getOutdoorDistance()
-        if not(src.getName() in self.nodes and dest.getName() in self.nodes):
+        if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
         self.edges[src].append([dest, (tot, outs)])
     def addNode(self, node):
-        if node.getName() in self.nodes:
+        if node in self.nodes:
             raise ValueError("Duplicate node")
         else:
-            self.nodes[node.getName()] = node
+            self.nodes.add(node)
+            self.nodeTable[node.getName()] = node
             self.edges[node] = []
     def getNode(self, nodeName):
-        return self.nodes[nodeName]            
+        return self.nodeTable[nodeName]            
     def hasNode(self, node):
-        return node.getName() in self.nodes
+        return node in self.nodes
     def hasNodeName(self, nodeName):
-        return nodeName in self.nodes
+        return nodeName in self.nodeTable
     def childrenOf(self, node):
         return self.edges[node[0]]
     def __str__(self):
