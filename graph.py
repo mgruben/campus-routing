@@ -89,8 +89,9 @@ class WeightedDigraph(Digraph):
     """
     def __init__(self):
         self.nodes = set([])
-        self.nodeTable = {}
-        self.edges = {}    
+        self.nodeTable = {} ## stores nodeName:Node pairs
+        self.edges = {}
+        self.edgeTable = {} ## stores (sourceNode, destNode):Edge pairs
     def addEdge(self, edge):  ## Note that the problem expects weights to be
                               ## a tuple of floats, but that the destination node
                               ## should not be included in this tuple; rather dest
@@ -105,6 +106,9 @@ class WeightedDigraph(Digraph):
         if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
         self.edges[src].append([dest, (tot, outs)])
+        self.edgeTable[(src,dest)] = edge
+    def getEdge(self, src, dest):
+        return self.edgeTable[(src, dest)]
     def addNode(self, node):
         if node in self.nodes:
             raise ValueError("Duplicate node")
@@ -123,6 +127,16 @@ class WeightedDigraph(Digraph):
         for entry in self.edges[node]:
             children.append(entry[0])
         return children
+    def getTotalDistance(self, path):
+        total = 0
+        for i in range(len(path) - 1):
+            total += self.getEdge(path[i], path[i+1]).getTotalDistance()
+        return total
+    def getOutdoorDistance(self, path):
+        outdoors = 0
+        for i in range(len(path) - 1):
+            outdoors += self.getEdge(path[i], path[i+1]).getTotalDistance()
+        return outdoors
     def __str__(self):
         res = ''
         for k in self.edges:
@@ -139,7 +153,7 @@ def printPath(path):
         else:
             result = result + str(path[i]) + '->'
     return result
-    
+
 #~ g = WeightedDigraph()
 #~ na = Node('a')
 #~ nb = Node('b')
