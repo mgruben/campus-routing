@@ -95,17 +95,23 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
+    printPath(path)
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
-        if (shortest == None) or \
-            (digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest)):
+        if shortest == None or \
+            digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest):
             if node.getName() not in path: # To avoid cycles
                 newPath = bruteForceSearch(digraph, node.getName(), end,\
                     maxTotalDist, maxDistOutdoors, path, shortest)
-                if newPath != None and digraph.pathMeetsBothConstraints(newPath, \
-                    maxTotalDist, maxDistOutdoors):
-                    shortest = newPath                    
+                if newPath != None \
+                    and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
+                        maxDistOutdoors):
+                    if shortest == None:
+                        shortest = newPath
+                    elif digraph.getTotalDistance(newPath) < \
+                        digraph.getTotalDistance(shortest):
+                        shortest = newPath                    
     if len(path) == 1 and shortest == None:
         raise ValueError("No path satisfies the constraints")
     else:
@@ -169,12 +175,11 @@ if __name__ == '__main__':
     #~ print(mitMap.getOutdoorDistance(path))
 
     #~ Course Test: map2 B
-    map2 = load_map("map2.txt")
-    print(bruteForceSearch(map2, "1", "3", 18, 18))
-    print(bruteForceSearch(map2, "1", "3", 15, 15))
+    #~ map2 = load_map("map2.txt")
+    #~ print(bruteForceSearch(map2, "1", "3", 18, 18))
+    #~ print(bruteForceSearch(map2, "1", "3", 15, 15))
     #~ print(bruteForceSearch(map2, "1", "3", 18, 0))
-    print(bruteForceSearch(map2, "1", "3", 10, 10)
-)
+    #~ print(bruteForceSearch(map2, "1", "3", 10, 10))
     
     #~ Course Test: map3 B
     #~ map3 = load_map("map3.txt")
@@ -182,6 +187,35 @@ if __name__ == '__main__':
     #~ print(bruteForceSearch(map3, "1", "3", 18, 0))
     #~ print(bruteForceSearch(map3, "1", "3", 10, 10))
 
+    #~ Course Test: map5 B
+    map5 = load_map("map5.txt")
+    #~ print(bruteForceSearch(map5, "1", "3", 17, 8))
+    #~ ['1', '2', '4', '3']
+    #~ print(bruteForceSearch(map5, "1", "5", 23, 11))
+    #~ ['1', '2', '4', '3', '5']
+    print(bruteForceSearch(map5, "4", "5", 21, 11))
+    #~ ['4', '3', '5']
+    #~ print(bruteForceSearch(map5, "5", "1", 100, 100))
+    #~ ValueError successfully raised
+    #~ print(bruteForceSearch(map5, "4", "5", 8, 2))
+    #~ ValueError successfully raised
+
+    #~ Course Test: map6 B
+    #~ map6 = load_map("map6.txt")
+    #~ print(bruteForceSearch(map6, "1", "5", 35, 9))
+    #~ ['1', '2', '4', '3', '5']
+    #~ print(bruteForceSearch(map6, "1", "5", 35, 8))
+    #~ ['1', '2', '4', '5']
+    #~ print(bruteForceSearch(map6, "4", "5", 21, 11))
+    #~ ['4', '3', '5']
+    #~ print(bruteForceSearch(map6, "4", "5", 21, 1))
+    #~ ['4', '5']
+    #~ print(bruteForceSearch(map6, "4", "5", 19, 1))
+    #~ ValueError successfully raised
+    #~ print(bruteForceSearch(map6, "3", "2", 100, 100))
+    #~ ValueError successfully raised
+    #~ print(bruteForceSearch(map6, "4", "5", 8, 2))
+    #~ ValueError successfully raised
 
     #~ Test case 1
     #~ print("---------------")
