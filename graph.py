@@ -143,7 +143,8 @@ class WeightedDigraph(Digraph):
         res = ''
         for k in self.edges:
             for d in self.edges[k]:
-                res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], d[1][0], d[1][1])
+                res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], \
+                float(d[1][0]), float(d[1][1]))
         return res[:-1]
 
 def printPath(path):
