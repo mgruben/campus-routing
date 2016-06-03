@@ -94,20 +94,20 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
-    totalDistance = 0
-    distOutdoors = 0
     path = path + [start]
     print("Current DFS path:", printPath(path))
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
-        if (shortest == None) or (len(path) < len(shortest)):
+        if (shortest == None) or \
+            (digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest)):
             if node.getName() not in path: # To avoid cycles
                 newPath = bruteForceSearch(digraph, node.getName(), end,\
                     maxTotalDist, maxDistOutdoors, path, shortest)
-                if newPath != None \
-                    and digraph.getTotalDistance(newPath) <= maxTotalDist \
-                    and digraph.getOutdoorDistance(newPath) <= maxDistOutdoors:
+                if digraph.getTotalDistance(newPath) > maxTotalDist \
+                    and digraph.getOutdoorDistance(newPath) > maxDistOutdoors:
+                    raise ValueError("No path found for given constraints")
+                else if newPath != None:
                     shortest = newPath
     return shortest
 
@@ -139,8 +139,17 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
         If there exists no path that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    #TODO
-    pass
+    assert type(start) == str, "start must be passed to directedDFS as a string"
+    assert type(end) == str, "end must be passed to directedDFS as a string"
+    
+    startNode = digraph.getNode(start)
+    endNode = digraph.getNode(end)
+    
+    assert digraph.hasNode(startNode), "start node not in WeightedDigraph"
+    assert digraph.hasNode(endNode), "end node not in WeightedDigraph"
+    
+    
+    
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
