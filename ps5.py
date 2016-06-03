@@ -95,22 +95,21 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
+    printPath(path)
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
-        if shortest == None or \
-            digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest):
-            if node.getName() not in path: # To avoid cycles
-                newPath = bruteForceSearch(digraph, node.getName(), end,\
-                    maxTotalDist, maxDistOutdoors, path, shortest)
-                if newPath != None \
-                    and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
-                        maxDistOutdoors):
-                    if shortest == None:
-                        shortest = newPath
-                    elif digraph.getTotalDistance(newPath) < \
-                        digraph.getTotalDistance(shortest):
-                        shortest = newPath                    
+        if node.getName() not in path: # To avoid cycles
+            newPath = bruteForceSearch(digraph, node.getName(), end,\
+                maxTotalDist, maxDistOutdoors, path, shortest)
+            if newPath != None \
+                and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
+                    maxDistOutdoors):
+                if shortest == None:
+                    shortest = newPath
+                elif digraph.getTotalDistance(newPath) < \
+                    digraph.getTotalDistance(shortest):
+                    shortest = newPath                    
     if len(path) == 1 and shortest == None:
         raise ValueError("No path satisfies the constraints")
     else:
@@ -223,18 +222,18 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], s
     #~ Course Test: map6 B
     #~ map6 = load_map("map6.txt")
     #~ print(bruteForceSearch(map6, "1", "5", 35, 9))
-    #~ ['1', '2', '4', '3', '5']
     #~ print(bruteForceSearch(map6, "1", "5", 35, 8))
-    #~ ['1', '2', '4', '5']
     #~ print(bruteForceSearch(map6, "4", "5", 21, 11))
-    #~ ['4', '3', '5']
     #~ print(bruteForceSearch(map6, "4", "5", 21, 1))
-    #~ ['4', '5']
     #~ print(bruteForceSearch(map6, "4", "5", 19, 1))
-    #~ ValueError successfully raised
     #~ print(bruteForceSearch(map6, "3", "2", 100, 100))
-    #~ ValueError successfully raised
     #~ print(bruteForceSearch(map6, "4", "5", 8, 2))
+    #~ ['1', '2', '4', '3', '5']
+    #~ ['1', '2', '4', '5']
+    #~ ['4', '3', '5']
+    #~ ['4', '5']
+    #~ ValueError successfully raised
+    #~ ValueError successfully raised
     #~ ValueError successfully raised
 
     #~ Test case 1
