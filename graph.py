@@ -139,6 +139,12 @@ class WeightedDigraph(Digraph):
             outdoors += self.getEdge(self.getNode(path[i]), self.getNode(path[i+1])).\
                 getOutdoorDistance()
         return outdoors
+    def pathFailsEitherConstraint(self, path, maxTotalDistance, maxOutdoorDistance):
+        return self.getTotalDistance(path) > maxTotalDistance \
+                or self.getOutdoorDistance(path) > maxOutdoorDistance
+    def pathMeetsBothConstraints(self, path, maxTotalDistance, maxOutdoorDistance):
+        return self.getTotalDistance(path) <= maxTotalDistance \
+                and self.getOutdoorDistance(path) <= maxOutdoorDistance
     def __str__(self):
         res = ''
         for k in self.edges:
@@ -155,7 +161,8 @@ def printPath(path):
             result = result + str(path[i])
         else:
             result = result + str(path[i]) + '->'
-    return result
+    print("Current DFS Path:", result)
+     
 
 #~ g = WeightedDigraph()
 #~ na = Node('a')
