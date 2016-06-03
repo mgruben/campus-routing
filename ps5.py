@@ -95,7 +95,6 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
-    print("Current DFS path:", printPath(path))
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
@@ -104,14 +103,13 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
             if node.getName() not in path: # To avoid cycles
                 newPath = bruteForceSearch(digraph, node.getName(), end,\
                     maxTotalDist, maxDistOutdoors, path, shortest)
-                if newPath != None:
-                    if digraph.getTotalDistance(newPath) > maxTotalDist \
-                    and digraph.getOutdoorDistance(newPath) > maxDistOutdoors:
-                        raise ValueError("No path found for given constraints")
-                    elif digraph.getTotalDistance(newPath) <= maxTotalDist \
-                        and digraph.getOutdoorDistance(newPath) <= maxDistOutdoors:
-                        shortest = newPath
-    return shortest
+                if newPath != None and digraph.pathMeetsBothConstraints(newPath, \
+                    maxTotalDist, maxDistOutdoors):
+                    shortest = newPath                    
+    if len(path) == 1 and shortest == None:
+        raise ValueError("No path satisfies the constraints")
+    else:
+        return shortest
 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
@@ -174,6 +172,16 @@ if __name__ == '__main__':
     map2 = load_map("map2.txt")
     print(bruteForceSearch(map2, "1", "3", 18, 18))
     print(bruteForceSearch(map2, "1", "3", 15, 15))
+    #~ print(bruteForceSearch(map2, "1", "3", 18, 0))
+    print(bruteForceSearch(map2, "1", "3", 10, 10)
+)
+    
+    #~ Course Test: map3 B
+    #~ map3 = load_map("map3.txt")
+    #~ print(bruteForceSearch(map3, "1", "3", 18, 18))
+    #~ print(bruteForceSearch(map3, "1", "3", 18, 0))
+    #~ print(bruteForceSearch(map3, "1", "3", 10, 10))
+
 
     #~ Test case 1
     #~ print("---------------")
