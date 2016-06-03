@@ -130,12 +130,14 @@ class WeightedDigraph(Digraph):
     def getTotalDistance(self, path):
         total = 0
         for i in range(len(path) - 1):
-            total += self.getEdge(path[i], path[i+1]).getTotalDistance()
+            total += self.getEdge(self.getNode(path[i]), self.getNode(path[i+1])).\
+                getTotalDistance()
         return total
     def getOutdoorDistance(self, path):
         outdoors = 0
         for i in range(len(path) - 1):
-            outdoors += self.getEdge(path[i], path[i+1]).getTotalDistance()
+            outdoors += self.getEdge(self.getNode(path[i]), self.getNode(path[i+1])).\
+                getOutdoorDistance()
         return outdoors
     def __str__(self):
         res = ''
