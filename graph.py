@@ -119,7 +119,10 @@ class WeightedDigraph(Digraph):
     def hasNodeName(self, nodeName):
         return nodeName in self.nodeTable
     def childrenOf(self, node):
-        return self.edges[node[0]]
+        children = []
+        for entry in self.edges[node]:
+            children.append(entry[0])
+        return children
     def __str__(self):
         res = ''
         for k in self.edges:
