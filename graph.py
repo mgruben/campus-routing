@@ -126,8 +126,17 @@ class WeightedDigraph(Digraph):
             for d in self.edges[k]:
                 res = '{0}{1}->{2} ({3}, {4})\n'.format(res, k, d[0], d[1][0], d[1][1])
         return res[:-1]
-    
 
+def printPath(path):
+    # a path is a list of nodes
+    result = ''
+    for i in range(len(path)):
+        if i == len(path) - 1:
+            result = result + str(path[i])
+        else:
+            result = result + str(path[i]) + '->'
+    return result
+    
 #~ g = WeightedDigraph()
 #~ na = Node('a')
 #~ nb = Node('b')
