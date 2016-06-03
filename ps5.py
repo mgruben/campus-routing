@@ -95,7 +95,6 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
-    printPath(path)
     if startNode == endNode:
         return path
     for node in digraph.childrenOf(startNode):
