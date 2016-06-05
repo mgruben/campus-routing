@@ -58,7 +58,7 @@ def load_map(mapFilename):
 # and what the constraints are
 #
 
-def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None, deadNodes = []):    
+def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):    
     """
     Finds the shortest path from start to end using brute-force approach.
     The total distance travelled on the path must not exceed maxTotalDist, and
@@ -97,12 +97,10 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     path = path + [start]
     if startNode == endNode:
         return path
-    if not digraph.hasChildNodes(startNode):
-        deadNodes = deadNodes + [start]
     for node in digraph.childrenOf(startNode):
         if node.getName() not in path: # To avoid cycles
             newPath = bruteForceSearch(digraph, node.getName(), end,\
-                maxTotalDist, maxDistOutdoors, path, shortest, deadNodes)
+                maxTotalDist, maxDistOutdoors, path, shortest)
             if newPath != None \
                 and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
                     maxDistOutdoors):
@@ -110,7 +108,7 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
                     shortest = newPath
                 elif digraph.getTotalDistance(newPath) < \
                     digraph.getTotalDistance(shortest):
-                    shortest = newPath
+                    shortest = newPath                    
     if len(path) == 1 and shortest == None:
         raise ValueError("No path satisfies the constraints")
     else:
@@ -119,7 +117,7 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
 #
-def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):
+def directedDFS(digraph, start, end, route, maxTotalDist, maxDistOutdoors, path = [], shortest = None):
     """
     Finds the shortest path from start to end using directed depth-first.
     search approach. The total distance travelled on the path must not
@@ -149,17 +147,26 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], s
     
     startNode = digraph.getNode(start)
     endNode = digraph.getNode(end)
-    
+
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
+    printPath(path)
     if startNode == endNode:
         return path
+    if not digraph.hasChildNodes(startNode):
+        route.markNodeDead(start)
+    for node in digraph.childrenOf(startNode):
+        if not route.isDeadNode(node.getName()):
+            break
+    else:
+        route.markNodeDead(start)
+        return shortest
     for node in digraph.childrenOf(startNode):
         if shortest == None or \
             digraph.getTotalDistance(path) < digraph.getTotalDistance(shortest):
-            if node.getName() not in path: # To avoid cycles
-                newPath = directedDFS(digraph, node.getName(), end,\
+            if (node.getName() not in path) and (not route.isDeadNode(node.getName())): # To avoid cycles
+                newPath = directedDFS(digraph, node.getName(), end, route,\
                     maxTotalDist, maxDistOutdoors, path, shortest)
                 if newPath != None \
                     and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
@@ -174,21 +181,93 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], s
     else:
         return shortest
     
+def bruteForcePruneSearch(digraph, start, end, route, maxTotalDist, maxDistOutdoors, path = [], shortest = None):    
+    """
+    Finds the shortest path from start to end using brute-force approach.
+    The total distance travelled on the path must not exceed maxTotalDist, and
+    the distance spent outdoor on this path must not exceed maxDistOutdoors.
     
+    This is an exhaustive depth-first search.
+
+    Parameters: 
+        digraph: instance of class Digraph or its subclass
+        start, end: start & end building numbers (strings)
+        maxTotalDist : maximum total distance on a path (integer)
+        maxDistOutdoors: maximum distance spent outdoors on a path (integer)
+        path: the path traveled so far (list)
+        shortest: the shortest satisfying path seen so far (list)
+
+    Assumes:
+        start and end are numbers for existing buildings in graph
+
+    Returns:
+        The shortest-path from start to end, represented by 
+        a list of building numbers (in strings), [n_1, n_2, ..., n_k], 
+        where there exists an edge from n_i to n_(i+1) in digraph, 
+        for all 1 <= i < k.
+
+        If there exists no path that satisfies maxTotalDist and
+        maxDistOutdoors constraints, then raises a ValueError.
+    """
+    assert type(start) == str, "start must be passed to bruteForceSearch as str"
+    assert type(end) == str, "end must be passed to bruteForceSearch as str"
+    
+    startNode = digraph.getNode(start)
+    endNode = digraph.getNode(end)
+    
+    assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
+    assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
+    path = path + [start]
+    printPath(path)
+    if startNode == endNode:
+        return path
+    if not digraph.hasChildNodes(startNode):
+        print("No children, marking dead node")
+        route.markNodeDead(start)
+    for node in digraph.childrenOf(startNode):
+        if not route.isDeadNode(node.getName()):
+            break
+    else:
+        print("No non-dead children nodes, marking dead node")
+        route.markNodeDead(start)
+        return shortest
+    for node in digraph.childrenOf(startNode):
+        if node.getName() not in path:
+            break
+    else:
+        print("No non-loop children nodes, marking dead node")
+        route.markNodeDead(start)
+        return shortest
+    for node in digraph.childrenOf(startNode):
+        if (node.getName() not in path) and (not route.isDeadNode(node.getName())): # To avoid cycles
+            newPath = bruteForcePruneSearch(digraph, node.getName(), end, route,\
+                maxTotalDist, maxDistOutdoors, path, shortest)
+            if newPath != None \
+                and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
+                    maxDistOutdoors):
+                if shortest == None:
+                    shortest = newPath
+                elif digraph.getTotalDistance(newPath) < \
+                    digraph.getTotalDistance(shortest):
+                    shortest = newPath                    
+    if len(path) == 1 and shortest == None:
+        raise ValueError("No path satisfies the constraints")
+    else:
+        return shortest
     
 
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
-#~ if __name__ == '__main__':
+if __name__ == '__main__':
     ## Test cases
-    #~ mitMap = load_map("mit_map.txt")
+    mitMap = load_map("mit_map.txt")
     #~ print(isinstance(mitMap, Digraph))
     #~ print(isinstance(mitMap, WeightedDigraph))
     #~ print('nodes', mitMap.nodes)
     #~ print('edges', mitMap.edges)
 
 
-    #~ LARGE_DIST = 1000000
+    LARGE_DIST = 1000000
     
     #~ User Test case A
     #~ path = [mitMap.getNode('32'), mitMap.getNode('76'), mitMap.getNode('68')]
@@ -238,15 +317,19 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], s
     #~ ValueError successfully raised
 
     #~ Test case 1
-    #~ print("---------------")
-    #~ print("Test case 1:")
-    #~ print("Find the shortest-path from Building 32 to 56")
-    #~ expectedPath1 = ['32', '56']
+    print("---------------")
+    print("Test case 1:")
+    print("Find the shortest-path from Building 32 to 56")
+    expectedPath1 = ['32', '56']
+    route = Path('32', '56')
     #~ brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-    #~ dfsPath1 = directedDFS(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-    #~ print("Expected: ", expectedPath1)
+    dfsPath1 = directedDFS(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
+    prunePath1 = bruteForcePruneSearch(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
+    print("Expected: ", expectedPath1)
     #~ print("Brute-force: ", brutePath1)
-    #~ print("DFS: ", dfsPath1)
+    print("DFS: ", dfsPath1)
+    print("PrunePath: ", prunePath1)
+    print("Dead nodes: ", route.getDeadNodes())
     #~ print("Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1))
 
     #~ Test case 2
