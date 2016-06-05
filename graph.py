@@ -156,7 +156,30 @@ class WeightedDigraph(Digraph):
         return res[:-1]
 
 class Path(object):
-    def __init__(self, src, dest):
+    def __init__(self, start, end):
+        assert type(start) == str, "start must be passed to Path as a string"
+        assert type(end) == str, "end must be passed to Path as a string"
+        
+        self.start = start
+        self.end = end
+        self.head = start
+        self.shortest = []
+        self.deadNodes = []
+        
+    def getStart(self):
+        return self.src
+        
+    def getEnd(self):
+        return self.dest
+        
+    def getShortest(self):
+        return self.shortest
+        
+    def getDeadNodes(self):
+        return self.deadNodes
+        
+    def getHead(self):
+        return self.head
         
 def printPath(path):
     # a path is a list of nodes
