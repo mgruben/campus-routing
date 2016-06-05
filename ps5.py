@@ -151,15 +151,18 @@ def directedDFS(digraph, start, end, route, maxTotalDist, maxDistOutdoors, path 
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
     path = path + [start]
-    printPath(path)
+    route.addStep()
+    printPath(path, "DFS")
     if startNode == endNode:
         return path
     if not digraph.hasChildNodes(startNode):
+        print("No children, marking dead node")
         route.markNodeDead(start)
     for node in digraph.childrenOf(startNode):
         if not route.isDeadNode(node.getName()):
             break
     else:
+        print("No non-dead children nodes, marking dead node")
         route.markNodeDead(start)
         return shortest
     for node in digraph.childrenOf(startNode):
@@ -217,8 +220,9 @@ def bruteForcePruneSearch(digraph, start, end, route, maxTotalDist, maxDistOutdo
     
     assert digraph.hasNode(startNode), "start node is not in the weighted digraph"
     assert digraph.hasNode(endNode), "end node is not in the weighted digraph"
+    route.addStep()
     path = path + [start]
-    printPath(path)
+    printPath(path, "Prune")
     if startNode == endNode:
         return path
     if not digraph.hasChildNodes(startNode):
@@ -229,13 +233,6 @@ def bruteForcePruneSearch(digraph, start, end, route, maxTotalDist, maxDistOutdo
             break
     else:
         print("No non-dead children nodes, marking dead node")
-        route.markNodeDead(start)
-        return shortest
-    for node in digraph.childrenOf(startNode):
-        if node.getName() not in path:
-            break
-    else:
-        print("No non-loop children nodes, marking dead node")
         route.markNodeDead(start)
         return shortest
     for node in digraph.childrenOf(startNode):
@@ -317,19 +314,19 @@ if __name__ == '__main__':
     #~ ValueError successfully raised
 
     #~ Test case 1
-    print("---------------")
-    print("Test case 1:")
-    print("Find the shortest-path from Building 32 to 56")
-    expectedPath1 = ['32', '56']
-    route = Path('32', '56')
+    #~ print("---------------")
+    #~ print("Test case 1:")
+    #~ print("Find the shortest-path from Building 32 to 56")
+    #~ expectedPath1 = ['32', '56']
+    #~ route = Path('32', '56')
     #~ brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-    dfsPath1 = directedDFS(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
-    prunePath1 = bruteForcePruneSearch(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
-    print("Expected: ", expectedPath1)
+    #~ dfsPath1 = directedDFS(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
+    #~ prunePath1 = bruteForcePruneSearch(mitMap, '32', '56', route, LARGE_DIST, LARGE_DIST)
+    #~ print("Expected: ", expectedPath1)
     #~ print("Brute-force: ", brutePath1)
-    print("DFS: ", dfsPath1)
-    print("PrunePath: ", prunePath1)
-    print("Dead nodes: ", route.getDeadNodes())
+    #~ print("DFS: ", dfsPath1)
+    #~ print("PrunePath: ", prunePath1)
+    #~ print("Dead nodes: ", route.getDeadNodes())
     #~ print("Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1))
 
     #~ Test case 2
@@ -381,15 +378,21 @@ if __name__ == '__main__':
     #~ print("Correct? BFS: {0}; DFS: {1}".format(expectedPath5 == brutePath5, expectedPath5 == dfsPath5))
 
     #~ Test case 6
-    #~ print("---------------")
-    #~ print("Test case 6:")
-    #~ print("Find the shortest-path from Building 1 to 32 without going outdoors")
-    #~ expectedPath6 = ['1', '3', '10', '4', '12', '24', '34', '36', '32']
+    print("---------------")
+    print("Test case 6:")
+    print("Find the shortest-path from Building 1 to 32 without going outdoors")
+    expectedPath6 = ['1', '3', '10', '4', '12', '24', '34', '36', '32']
     #~ brutePath6 = bruteForceSearch(mitMap, '1', '32', LARGE_DIST, 0)
-    #~ dfsPath6 = directedDFS(mitMap, '1', '32', LARGE_DIST, 0)
-    #~ print("Expected: ", expectedPath6)
+    route1 = Path('1', '32')
+    prunePath6 = bruteForcePruneSearch(mitMap, '1', '32', route1, LARGE_DIST, 0)
+    route2 = Path('1', '32')
+    dfsPath6 = directedDFS(mitMap, '1', '32', route2, LARGE_DIST, 0)
+    print("Expected: ", expectedPath6)
     #~ print("Brute-force: ", brutePath6)
-    #~ print("DFS: ", dfsPath6)
+    print("Prune: ", prunePath6)
+    print("DFS: ", dfsPath6)
+    print(route1.getDeadNodes(), route1.getSteps())
+    print(route2.getDeadNodes(), route2.getSteps())
     #~ print("Correct? BFS: {0}; DFS: {1}".format(expectedPath6 == brutePath6, expectedPath6 == dfsPath6))
 
     #~ Test case 7
@@ -397,19 +400,32 @@ if __name__ == '__main__':
     #~ print("Test case 7:")
     #~ print("Find the shortest-path from Building 8 to 50 without going outdoors")
     #~ bruteRaisedErr = 'No'
+    #~ pruneRaisedErr = 'No'
     #~ dfsRaisedErr = 'No'
+    
+    
     #~ try:
         #~ bruteForceSearch(mitMap, '8', '50', LARGE_DIST, 0)
     #~ except ValueError:
         #~ bruteRaisedErr = 'Yes'
-    
+    #~ route1 = Path('8','50')
     #~ try:
-        #~ directedDFS(mitMap, '8', '50', LARGE_DIST, 0)
+        #~ bruteForcePruneSearch(mitMap, '8', '50', route1, LARGE_DIST, 0)
+    #~ except ValueError:
+        #~ pruneRaisedErr = 'Yes'
+    
+    #~ route2 = Path('8','50')
+    #~ try:
+        #~ directedDFS(mitMap, '8', '50', route2, LARGE_DIST, 0)
     #~ except ValueError:
         #~ dfsRaisedErr = 'Yes'
+
+    #~ print(route1.getDeadNodes(), route1.getSteps())
+    #~ print(route2.getDeadNodes(), route2.getSteps())
     
     #~ print("Expected: No such path! Should throw a value error.")
     #~ print("Did brute force search raise an error?", bruteRaisedErr)
+    #~ print("Did brute force prune search raise an error?", pruneRaisedErr)
     #~ print("Did DFS search raise an error?", dfsRaisedErr)
 
     #~ Test case 8
