@@ -156,13 +156,7 @@ class WeightedDigraph(Digraph):
         return res[:-1]
 
 class Path(object):
-    def __init__(self, start, end):
-        assert type(start) == str, "start must be passed to Path as a string"
-        assert type(end) == str, "end must be passed to Path as a string"
-        
-        self.start = start
-        self.end = end
-        self.shortest = []
+    def __init__(self):
         self.deadNodes = []
         self.steps = 0
     def markNodeDead(self, node):
@@ -170,30 +164,14 @@ class Path(object):
             self.deadNodes.append(node)
         else:
             raise ValueError("Node already in deadNodes")
-    def hasShortest(self):
-        return len(self.shortest) > 0
-    def atEnd(self, node):
-        return node == self.end
-    def atStart(self, node):
-        return node == self.start
-    def isShortest(self, path):
-        return len(path) < len(self.shortest)
     def isDeadNode(self, node):
         return node in self.deadNodes
-    def setShortest(self, path):
-        self.shortest = path
     def addStep(self):
         self.steps += 1
-    def getStart(self):
-        return self.start
-    def getEnd(self):
-        return self.end
-    def getShortest(self):
-        return self.shortest[:]
-    def getDeadNodes(self):
-        return self.deadNodes[:]
     def getSteps(self):
         return self.steps
+    def getDeadNodes(self):
+        return self.deadNodes[:]
     def __str__(self):
         return '[ ' + str(self.start) + ' => ' + str(self.end) + ' ]'
         
