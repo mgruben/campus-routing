@@ -162,19 +162,8 @@ class Path(object):
         
         self.start = start
         self.end = end
-        self.current = []
         self.shortest = []
         self.deadNodes = []
-    def addQ(self, node):
-        if node not in self.current:
-            self.current.append(node)
-        else:
-            raise ValueError("Node already in current path")
-    def removeQ(self, node):
-        if node not in self.current:
-            raise ValueError("Node not in the current path")
-        else:
-            self.current.remove(node)
     def markNodeDead(self, node):
         if node not in self.deadNodes:
             self.deadNodes.append(node)
@@ -182,18 +171,16 @@ class Path(object):
             raise ValueError("Node already in deadNodes")
     def hasShortest(self):
         return len(self.shortest) > 0
-    def atEnd(self):
-        return self.head == self.end
-    def atStart(self):
-        return self.head == self.start
-    def isShortest(self):
-        return len(self.current) < len(self.shortest)
+    def atEnd(self, node):
+        return node == self.end
+    def atStart(self, node):
+        return node == self.start
+    def isShortest(self, path):
+        return len(path) < len(self.shortest)
     def isDeadNode(self, node):
         return node in self.deadNodes
-    def setShortest(self):
-        self.shortest = self.current
-    def getCurrentPath(self):
-        return self.current[:]    
+    def setShortest(self, path):
+        self.shortest = path
     def getStart(self):
         return self.start
     def getEnd(self):
