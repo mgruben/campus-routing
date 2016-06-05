@@ -58,7 +58,7 @@ def load_map(mapFilename):
 # and what the constraints are
 #
 
-def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None):    
+def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = [], shortest = None, deadNodes = []):    
     """
     Finds the shortest path from start to end using brute-force approach.
     The total distance travelled on the path must not exceed maxTotalDist, and
@@ -97,10 +97,12 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
     path = path + [start]
     if startNode == endNode:
         return path
+    if not digraph.hasChildNodes(startNode):
+        deadNodes = deadNodes + [start]
     for node in digraph.childrenOf(startNode):
         if node.getName() not in path: # To avoid cycles
             newPath = bruteForceSearch(digraph, node.getName(), end,\
-                maxTotalDist, maxDistOutdoors, path, shortest)
+                maxTotalDist, maxDistOutdoors, path, shortest, deadNodes)
             if newPath != None \
                 and digraph.pathMeetsBothConstraints(newPath, maxTotalDist, \
                     maxDistOutdoors):
@@ -108,7 +110,7 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors, path = 
                     shortest = newPath
                 elif digraph.getTotalDistance(newPath) < \
                     digraph.getTotalDistance(shortest):
-                    shortest = newPath                    
+                    shortest = newPath
     if len(path) == 1 and shortest == None:
         raise ValueError("No path satisfies the constraints")
     else:
