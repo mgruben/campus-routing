@@ -164,6 +164,7 @@ class Path(object):
         self.end = end
         self.shortest = []
         self.deadNodes = []
+        self.steps = 0
     def markNodeDead(self, node):
         if node not in self.deadNodes:
             self.deadNodes.append(node)
@@ -181,6 +182,8 @@ class Path(object):
         return node in self.deadNodes
     def setShortest(self, path):
         self.shortest = path
+    def addStep(self):
+        self.steps += 1
     def getStart(self):
         return self.start
     def getEnd(self):
@@ -189,10 +192,12 @@ class Path(object):
         return self.shortest[:]
     def getDeadNodes(self):
         return self.deadNodes[:]
+    def getSteps(self):
+        return self.steps
     def __str__(self):
         return '[ ' + str(self.start) + ' => ' + str(self.end) + ' ]'
         
-def printPath(path):
+def printPath(path, type):
     # a path is a list of nodes
     result = ''
     for i in range(len(path)):
@@ -200,7 +205,7 @@ def printPath(path):
             result = result + str(path[i])
         else:
             result = result + str(path[i]) + '->'
-    print("Current DFS Path:", result)
+    print("Current "+type+" Path:", result)
      
 
 #~ g = WeightedDigraph()
