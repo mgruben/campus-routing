@@ -128,7 +128,7 @@ class WeightedDigraph(Digraph):
             children.append(entry[0])
         return children
     def hasChildNodes(self, node):
-        return len(self.edges[node]) != 0
+        return len(self.edges[node]) > 0
     def getTotalDistance(self, path):
         total = 0
         for i in range(len(path) - 1):
