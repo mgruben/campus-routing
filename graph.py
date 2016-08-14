@@ -127,6 +127,8 @@ class WeightedDigraph(Digraph):
         for entry in self.edges[node]:
             children.append(entry[0])
         return children
+    def hasChildNodes(self, node):
+        return len(self.edges[node]) > 0
     def getTotalDistance(self, path):
         total = 0
         for i in range(len(path) - 1):
@@ -153,7 +155,27 @@ class WeightedDigraph(Digraph):
                 float(d[1][0]), float(d[1][1]))
         return res[:-1]
 
-def printPath(path):
+class Path(object):
+    def __init__(self):
+        self.deadNodes = []
+        self.steps = 0
+    def markNodeDead(self, node):
+        if node not in self.deadNodes:
+            self.deadNodes.append(node)
+        else:
+            raise ValueError("Node already in deadNodes")
+    def isDeadNode(self, node):
+        return node in self.deadNodes
+    def addStep(self):
+        self.steps += 1
+    def getSteps(self):
+        return self.steps
+    def getDeadNodes(self):
+        return self.deadNodes[:]
+    def __str__(self):
+        return '[ ' + str(self.start) + ' => ' + str(self.end) + ' ]'
+        
+def printPath(path, type):
     # a path is a list of nodes
     result = ''
     for i in range(len(path)):
@@ -161,25 +183,26 @@ def printPath(path):
             result = result + str(path[i])
         else:
             result = result + str(path[i]) + '->'
-    print("Current DFS Path:", result)
+    print("Current "+type+" Path:", result)
      
 
-#~ g = WeightedDigraph()
-#~ na = Node('a')
-#~ nb = Node('b')
-#~ nc = Node('c')
-#~ g.addNode(na)
-#~ g.addNode(nb)
-#~ g.addNode(nc)
-#~ e1 = WeightedEdge(na, nb, 15, 10)
-#~ print(e1)
-#~ print(e1.getTotalDistance())
-#~ print(e1.getOutdoorDistance())
-#~ e2 = WeightedEdge(na, nc, 14, 6)
-#~ e3 = WeightedEdge(nb, nc, 3, 1)
-#~ print(e2)
-#~ print(e3)
-#~ g.addEdge(e1)
-#~ g.addEdge(e2)
-#~ g.addEdge(e3)
-#~ print(g)
+if __name__=="__main__":
+    g = WeightedDigraph()
+    na = Node('a')
+    nb = Node('b')
+    nc = Node('c')
+    g.addNode(na)
+    g.addNode(nb)
+    g.addNode(nc)
+    e1 = WeightedEdge(na, nb, 15, 10)
+    print(e1)
+    print(e1.getTotalDistance())
+    print(e1.getOutdoorDistance())
+    e2 = WeightedEdge(na, nc, 14, 6)
+    e3 = WeightedEdge(nb, nc, 3, 1)
+    print(e2)
+    print(e3)
+    g.addEdge(e1)
+    g.addEdge(e2)
+    g.addEdge(e3)
+    print(g)
